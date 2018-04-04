@@ -1,2 +1,2 @@
-ansible>=1.9
+git+https://github.com/EncoreTechnologies/ansible.git@devel#ansible
 pywinrm[credssp,kerberos]>=0.2.2
