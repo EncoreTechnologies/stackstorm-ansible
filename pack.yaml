@@ -1,11 +1,13 @@
 ---
 ref: ansible
 name : ansible
-description : st2 content pack containing ansible integrations
+description : ansible integrations
 keywords:
   - ansible
   - cfg management
   - configuration management
-version : 0.5.4
+version: 1.1.0
 author : StackStorm, Inc.
 email : info@stackstorm.com
+python_versions:
+  - "3"

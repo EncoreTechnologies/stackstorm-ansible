@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.1.0
+
+* Support st2 v3.9 release
+* Replace self.assertItemsEqual with self.assertCountEqual
+
+## 1.0.0
+
+* Drop Python 2.7 support
+
+## v0.5.9
+* Fix pack compatibility under python 3 when unsupported implicit relative import was used (#41)
+
+## v0.5.8
+*  Minor linting fix
+
+## v0.5.7
+*  add `netaddr` to requirements. This package is required for common ansible filters such as ipaddr() and ipmath(). See https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html for more details
+
+## v0.5.6
+*  Fix Ansible pack shebang to utilize st2 python virtualenv (#33)
+
+## v0.5.5
+
+* Fix Jinja rendering issue for Ansible vault actions (#28)
+
 ## v0.5.4
 * Set default `CWD` working dir to current pack/workflow path,
   allowing using relative path to playbooks shipped with custom pack (#9)
