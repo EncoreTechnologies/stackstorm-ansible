@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+* Updated python modules to work with RHEL 9 and Python 3.9
+
 ## 1.1.0
 
 * Support st2 v3.9 release

@@ -1,3 +1,4 @@
-git+https://github.com/EncoreTechnologies/ansible.git@devel#ansible
+ansible
+ansible-core
 pywinrm[credssp,kerberos]>=0.2.2
 netaddr>=0.7.19
