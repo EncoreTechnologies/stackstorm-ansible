@@ -1,4 +1,4 @@
 ansible>=6.7.0
-ansible-core>=2.20.0
+ansible-core>=2.15.13
 pywinrm[credssp,kerberos]>=0.2.2
 netaddr>=0.7.19
