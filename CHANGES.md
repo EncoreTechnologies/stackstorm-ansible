@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1
+* Adding pypsrp connection type for Windows hosts
+
 ## 1.2.0
 
 * Updated python modules to work with RHEL 9 and Python 3.9
@@ -74,7 +77,7 @@ sample_task:
   action: ansible.playbook
   input:
     playbook: playbook.yml
-    extra_vars: 
+    extra_vars:
       - "@path/to/file.yml"
       - "@path/to/file.json"
       - key1=value1
