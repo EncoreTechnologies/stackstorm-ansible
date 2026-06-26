@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.2
+* Lowering version requirement to work on RHEL 9
+
 ## 1.2.1
 * Adding pypsrp connection type for Windows hosts
 
