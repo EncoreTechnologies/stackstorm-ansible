@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.3
+* Fixed issue with passwords that were passed via extra-vars getting exposed in the output when a playbook failed
+
 ## 1.2.2
 * Lowering version requirement to work on RHEL 9
 

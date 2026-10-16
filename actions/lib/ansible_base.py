@@ -3,6 +3,7 @@ import sys
 import subprocess
 import ast
 import json
+import shlex
 import six
 
 from . import shell
@@ -26,7 +27,62 @@ class AnsibleBaseRunner(object):
         """
         self.args = args[1:]
         self._parse_extra_vars()  # handle multiple entries in --extra_vars arg
+        self.censored_args = [self._censor_extra_vars_arg(arg) for arg in self.args]
         self._prepend_venv_path()
+
+    @staticmethod
+    def _is_sensitive_extra_var(name):
+        """
+        Determine if the given extra-vars name is sensitive. Any variable
+        containing 'password', 'passwd', or ending with '_pass' is considered sensitive.
+        """
+        name = name.lower()
+        return 'password' in name or 'passwd' in name or name.endswith('_pass')
+
+    @classmethod
+    def _censor_extra_vars_value(cls, value):
+        if isinstance(value, dict):
+            return {
+                key: '********' if cls._is_sensitive_extra_var(str(key))
+                else cls._censor_extra_vars_value(item)
+                for key, item in value.items()
+            }
+        if isinstance(value, list):
+            return [cls._censor_extra_vars_value(item) for item in value]
+        return value
+
+    @classmethod
+    def _censor_extra_vars_arg(cls, arg):
+        """
+        Censor sensitive information in the --extra-vars argument.
+        """
+        prefix = '--extra-vars='
+        if not arg.startswith(prefix):
+            return arg
+
+        value = arg[len(prefix):]
+        if value.startswith('@'):
+            return arg
+
+        try:
+            parsed_value = json.loads(value)
+        except (TypeError, ValueError):
+            try:
+                tokens = shlex.split(value)
+            except ValueError:
+                return prefix + '********'
+
+            censored_tokens = []
+            for token in tokens:
+                name, separator, _ = token.partition('=')
+                if separator and cls._is_sensitive_extra_var(name):
+                    token = name + '=********'
+                censored_tokens.append(token)
+            return prefix + shlex.join(censored_tokens)
+
+        if isinstance(parsed_value, (dict, list)):
+            return prefix + json.dumps(cls._censor_extra_vars_value(parsed_value))
+        return arg
 
     def _parse_extra_vars(self):
         """
@@ -105,7 +161,8 @@ class AnsibleBaseRunner(object):
         """
         exit_code = subprocess.call(self.cmd, env=os.environ.copy())
         if exit_code != 0:
-            sys.stderr.write('Executed command "%s"\n' % ' '.join(self.cmd))
+            display_cmd = [self.binary] + self.censored_args
+            sys.stderr.write('Executed command "%s"\n' % ' '.join(display_cmd))
         sys.exit(exit_code)
 
     @property

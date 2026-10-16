@@ -26,6 +26,30 @@ class TestActionsLibAnsibleBaseRunner(BasePackResourceTestCase):
         ansible_base_runner = AnsibleBaseRunner(args)
         self.assertEqual(ansible_base_runner.args, args[1:])
 
+    def test_censor_extra_vars_key_value(self):
+        arg = '--extra-vars=ansible_user=admin ansible_password=secret'
+
+        censored = AnsibleBaseRunner._censor_extra_vars_arg(arg)
+
+        self.assertEqual(
+            censored,
+            '--extra-vars=ansible_user=admin ansible_password=********'
+        )
+
+    def test_censor_extra_vars_json_nested(self):
+        extra_vars = {
+            'ansible_password': 'secret',
+            'nested': [{'db_pass': 'another-secret', 'visible': 'value'}]
+        }
+        arg = '--extra-vars=' + json.dumps(extra_vars)
+
+        censored = AnsibleBaseRunner._censor_extra_vars_arg(arg)
+        censored_vars = json.loads(censored.split('=', 1)[1])
+
+        self.assertEqual(censored_vars['ansible_password'], '********')
+        self.assertEqual(censored_vars['nested'][0]['db_pass'], '********')
+        self.assertEqual(censored_vars['nested'][0]['visible'], 'value')
+
     # AnsibleBaseRunner._parse_extra_vars()
 
     @staticmethod
